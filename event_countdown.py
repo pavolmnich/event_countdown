@@ -97,6 +97,17 @@ class EventCountdown(tk.Tk):
         self.countdown_win.configure(bg="#222")
         self.countdown_win.protocol("WM_DELETE_WINDOW", self.on_countdown_close)
 
+        # Current time label
+        self.cd_time_label = ttk.Label(
+            self.countdown_win,
+            text="--:--:--",
+            font=("Helvetica", 18),
+            background="#222",
+            foreground="#fff"
+        )
+        self.cd_time_label.pack(pady=(20, 5))
+        self.update_current_time()
+
         # Event name label
         self.cd_event_label = ttk.Label(
             self.countdown_win,
@@ -105,7 +116,7 @@ class EventCountdown(tk.Tk):
             background="#222",
             foreground="#fff"
         )
-        self.cd_event_label.pack(pady=20)
+        self.cd_event_label.pack(pady=5)
 
         # Countdown label
         self.cd_countdown_label = ttk.Label(
@@ -160,6 +171,13 @@ class EventCountdown(tk.Tk):
             text=f"{days:02d}:{hours:02d}:{minutes:02d}:{seconds:02d}"
         )
         self.countdown_win.after(1000, self.update_countdown_window)
+
+    def update_current_time(self):
+        if not hasattr(self, 'countdown_win') or not self.is_counting:
+            return
+        now = datetime.now().strftime("%H:%M:%S")
+        self.cd_time_label.config(text=now)
+        self.countdown_win.after(1000, self.update_current_time)
 
 if __name__ == "__main__":
     app = EventCountdown()
