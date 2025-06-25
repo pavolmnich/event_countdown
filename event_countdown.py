@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 import time
+import json
+import os
 
 class EventCountdown(tk.Tk):
     def __init__(self):
@@ -47,6 +49,10 @@ class EventCountdown(tk.Tk):
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.intervals_listbox.config(yscrollcommand=self.scrollbar.set)
 
+        # Load from file button
+        self.load_button = ttk.Button(self, text="Načítať intervaly zo súboru", command=self.load_intervals_from_file)
+        self.load_button.pack(pady=5)
+
         # Start button
         self.start_button = ttk.Button(self, text="Spustiť odpočítavanie", command=self.start_countdown)
         self.start_button.pack(pady=10)
@@ -61,6 +67,9 @@ class EventCountdown(tk.Tk):
         self.is_counting = False
         self.target_datetime = None
         self.current_interval_index = None
+
+        # Načítaj intervaly zo súboru až po vytvorení všetkých widgetov
+        self.load_intervals_from_file()
 
     def add_interval(self):
         date_str = self.date_entry.get()
@@ -220,6 +229,35 @@ class EventCountdown(tk.Tk):
         now = datetime.now().strftime("%H:%M:%S")
         self.cd_time_label.config(text=now)
         self.countdown_win.after(1000, self.update_current_time)
+
+    def load_intervals_from_file(self):
+        filename = "intervals.json"
+        if not os.path.exists(filename):
+            self.event_label.config(text=f"Konfiguračný súbor {filename} neexistuje.")
+            return
+        try:
+            with open(filename, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self.intervals.clear()
+            loaded = 0
+            for item in data:
+                name = item.get("name")
+                dt_str = item.get("datetime")
+                print(f"Spracovávam položku: {item}")
+                print(f"  name: {name}, datetime: {dt_str}")
+                try:
+                    dt = datetime.strptime(dt_str, "%d.%m.%Y %H:%M")
+                    if dt > datetime.now():
+                        self.intervals.append({"name": name, "datetime": dt})
+                        loaded += 1
+                except Exception as e:
+                    print(f"  Chyba pri parsovaní: {e}")
+                    self.event_label.config(text=f"Chyba pri načítaní: {e}")
+                    continue
+            self.update_intervals_listbox()
+            self.event_label.config(text=f"Načítaných {loaded} intervalov zo súboru.")
+        except Exception as e:
+            self.event_label.config(text=f"Chyba pri načítaní: {e}")
 
 if __name__ == "__main__":
     app = EventCountdown()
