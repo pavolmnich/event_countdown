@@ -18,6 +18,7 @@ COLOR_BTN_BG = "#222"
 COLOR_BTN_FG = "#888"
 COLOR_BTN_ACTIVE_BG = "#222"
 COLOR_BTN_ACTIVE_FG = "#fff"
+FILE_NAME = "intervals.json"
 
 class Tooltip:
     def __init__(self, widget, text):
@@ -333,12 +334,11 @@ class EventCountdown(tk.Tk):
         self.countdown_win.after(1000, self.update_current_time)
 
     def load_intervals_from_file(self):
-        filename = "intervals.json"
-        if not os.path.exists(filename):
-            self.event_label.config(text=f"Konfiguračný súbor {filename} neexistuje.")
+        if not os.path.exists(FILE_NAME):
+            self.event_label.config(text=f"Konfiguračný súbor {FILE_NAME} neexistuje.")
             return
         try:
-            with open(filename, "r", encoding="utf-8") as f:
+            with open(FILE_NAME, "r", encoding="utf-8") as f:
                 data = json.load(f)
             self.intervals.clear()
             loaded = 0
