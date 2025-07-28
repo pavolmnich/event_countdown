@@ -9,7 +9,7 @@ from screeninfo import get_monitors
 # --- KONŠTANTY ---
 FONT_SIZE_TIME = 62
 FONT_SIZE_EVENT = 48
-FONT_SIZE_COUNTDOWN = 130
+FONT_SIZE_COUNTDOWN = 80
 COLOR_BG = "#222"
 COLOR_FG = "#fff"
 COLOR_COUNTDOWN_FG = "#ff5555"
@@ -171,7 +171,7 @@ class EventCountdown(tk.Tk):
     def open_countdown_window(self, event_name):
         self.countdown_win = tk.Toplevel(self)
         self.countdown_win.title("Odpočítavanie")
-        self.countdown_win.geometry("800x600")
+        self.countdown_win.geometry("800x450")
         self.countdown_win.configure(bg=COLOR_BG)
         self.countdown_win.protocol("WM_DELETE_WINDOW", self.on_countdown_close)
         # Bind ESC na vypnutie fullscreen
@@ -200,7 +200,7 @@ class EventCountdown(tk.Tk):
         # Event name label (top, pod časom)
         self.cd_event_label = tk.Label(
             self.top_frame,
-            text="Do konca zostáva",
+            text="Zostávajúci čas",
             font=("Helvetica", FONT_SIZE_EVENT, "bold"),
             bg=COLOR_BG,
             fg=COLOR_FG,
@@ -292,7 +292,7 @@ class EventCountdown(tk.Tk):
             return
         now = datetime.now()
         if self.target_datetime <= now:
-            self.cd_countdown_label.config(text="ČAS VYPRŠAL !!!")
+            self.cd_countdown_label.config(text="Čas vypršal!")
             self.is_counting = False
             self.next_btn.pack(pady=10)
             return
@@ -321,7 +321,7 @@ class EventCountdown(tk.Tk):
         future_intervals.sort(key=lambda x: x["datetime"])
         self.current_interval_index = self.intervals.index(future_intervals[0])
         self.target_datetime = future_intervals[0]["datetime"]
-        self.cd_event_label.config(text=future_intervals[0]["name"])
+        self.cd_event_label.config(text="Zostávajúci čas")
         self.is_counting = True
         self.next_btn.pack_forget()
         self.update_countdown_window()
